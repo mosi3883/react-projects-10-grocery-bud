@@ -1,10 +1,18 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import List from './List';
 import Alert from './Alert';
 
+const getListFromLocalStorage = () => {
+  const items = localStorage.getItem('list');
+  if (!items) {
+    return [];
+  }
+  return JSON.parse(items);
+};
+
 function App() {
   const [name, setName] = useState('');
-  const [list, setList] = useState([]);
+  const [list, setList] = useState(getListFromLocalStorage());
   const [isEditing, setIsEditing] = useState(false);
   const [editID, setEditID] = useState(null);
   const [alert, setAlert] = useState({ show: false, msg: '', type: '' });
@@ -55,6 +63,11 @@ function App() {
 
     setName(item.title);
   };
+
+  useEffect(() => {
+    localStorage.setItem('list', JSON.stringify(list));
+  }, [list]);
+
   return (
     <section className='section-center'>
       <form className='grocery-form' onSubmit={handleSubmit}>
